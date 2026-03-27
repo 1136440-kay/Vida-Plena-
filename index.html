@@ -22,11 +22,13 @@ align-items:center;
 z-index:9999;
 }
 input{padding:10px;margin:5px;}
+#userInfo{padding:10px;font-weight:bold;}
 </style>
 
 </head>
 <body>
 
+<!-- 🔐 LOGIN -->
 <div id="loginScreen">
   <h2>🔐 VidaPlena+ Login</h2>
   <input id="user" placeholder="Usuário">
@@ -36,16 +38,22 @@ input{padding:10px;margin:5px;}
   <p id="msg"></p>
 </div>
 
+<!-- 👤 USUÁRIO -->
+<div id="userInfo"></div>
+
+<!-- ❤️ BATIMENTOS -->
 <div class="card">
 <h3>❤️ Batimentos</h3>
 <p id="bpm"></p>
 </div>
 
+<!-- 🤖 IA -->
 <div class="card">
 <h3>🤖 IA</h3>
 <p id="ia"></p>
 </div>
 
+<!-- 📋 PRONTUÁRIO -->
 <div class="card">
 <h3>📋 Prontuário</h3>
 <input id="nota">
@@ -53,6 +61,7 @@ input{padding:10px;margin:5px;}
 <ul id="lista"></ul>
 </div>
 
+<!-- 🦷 ODONTO -->
 <div class="card">
 <h3>🦷 Odontologia</h3>
 <input id="dente">
@@ -60,9 +69,18 @@ input{padding:10px;margin:5px;}
 <ul id="listaOdonto"></ul>
 </div>
 
-<button class="emergency" onclick="alert('🚨 Emergência acionada!')">🚨</button>
+<!-- ⚙️ AÇÕES -->
+<div class="card">
+<button onclick="logout()">🚪 Sair</button>
+<button onclick="limparDados()">🗑️ Limpar dados</button>
+</div>
+
+<!-- 🚨 EMERGÊNCIA -->
+<button class="emergency" onclick="emergencia()">🚨</button>
 
 <script>
+
+// 🔐 CADASTRO
 function cadastro(){
 let usuario=document.getElementById("user").value;
 let senha=document.getElementById("pass").value;
@@ -77,30 +95,58 @@ localStorage.setItem("pass",senha);
 document.getElementById("msg").innerText="Cadastro realizado!";
 }
 
+// 🔐 LOGIN
 function login(){
 let usuario=document.getElementById("user").value;
 let senha=document.getElementById("pass").value;
 
 if(usuario===localStorage.getItem("user") && senha===localStorage.getItem("pass")){
 document.getElementById("loginScreen").style.display="none";
+mostrarUsuario();
 }else{
 document.getElementById("msg").innerText="Usuário ou senha incorretos!";
 }
 }
 
+// 👤 MOSTRAR USUÁRIO
+function mostrarUsuario(){
+let user=localStorage.getItem("user");
+document.getElementById("userInfo").innerText="👤 Usuário: "+user;
+}
+
+// 🚪 LOGOUT
+function logout(){
+document.getElementById("loginScreen").style.display="flex";
+}
+
+// ❤️ MONITORAMENTO + IA MELHORADA
 setInterval(()=>{
 let bpm=Math.floor(Math.random()*40)+60;
 document.getElementById("bpm").innerText=bpm+" bpm";
-document.getElementById("ia").innerText=bpm>100?"🚨 Risco":"Normal";
+
+if(bpm > 110){
+document.getElementById("ia").innerText="🚨 Alto risco";
+}else if(bpm > 90){
+document.getElementById("ia").innerText="⚠️ Atenção";
+}else{
+document.getElementById("ia").innerText="✅ Normal";
+}
 },2000);
 
+// 📋 PRONTUÁRIO COM DATA
 function salvar(){
 let dados=JSON.parse(localStorage.getItem("prontuario"))||[];
-dados.push(document.getElementById("nota").value);
+
+let texto=document.getElementById("nota").value;
+let data=new Date().toLocaleString();
+
+dados.push(data+" → "+texto);
+
 localStorage.setItem("prontuario",JSON.stringify(dados));
 mostrar();
 }
 
+// MOSTRAR PRONTUÁRIO
 function mostrar(){
 let lista=document.getElementById("lista");
 lista.innerHTML="";
@@ -112,15 +158,21 @@ lista.appendChild(li);
 });
 }
 
+// 🦷 ODONTO
 function odonto(){
 let texto=document.getElementById("dente").value;
 let diag=texto.includes("dor")?"Possível cárie":"Avaliação";
 let dados=JSON.parse(localStorage.getItem("odonto"))||[];
-dados.push(texto+" → "+diag);
+
+let data=new Date().toLocaleString();
+
+dados.push(data+" → "+texto+" → "+diag);
+
 localStorage.setItem("odonto",JSON.stringify(dados));
 mostrarOdonto();
 }
 
+// MOSTRAR ODONTO
 function mostrarOdonto(){
 let lista=document.getElementById("listaOdonto");
 lista.innerHTML="";
@@ -132,10 +184,30 @@ lista.appendChild(li);
 });
 }
 
+// 🚨 EMERGÊNCIA COM REGISTRO
+function emergencia(){
+let dados=JSON.parse(localStorage.getItem("emergencia"))||[];
+let data=new Date().toLocaleString();
+
+dados.push("🚨 Emergência acionada em: "+data);
+localStorage.setItem("emergencia",JSON.stringify(dados));
+
+alert("🚨 Emergência registrada!");
+}
+
+// 🗑️ LIMPAR DADOS
+function limparDados(){
+localStorage.clear();
+alert("Dados apagados!");
+location.reload();
+}
+
+// 🔄 CARREGAR
 window.onload=function(){
 mostrar();
 mostrarOdonto();
 }
+
 </script>
 
 </body>
