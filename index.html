@@ -3,57 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VidaPlena+</title>
+<title>VidaPlena+ Premium</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{font-family:Arial;background:#eef2ff;margin:0;}
-.card{background:white;padding:15px;margin:10px;border-radius:10px;}
-button{padding:10px;margin-top:5px;}
-.emergency{position:fixed;bottom:20px;right:20px;background:red;color:white;padding:20px;border-radius:50%;}
+body{
+margin:0;
+font-family:'Segoe UI';
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:#333;
+display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:220px;
+background:#1e1e2f;
+color:white;
+padding:20px;
+height:100vh;
+}
+
+.sidebar h2{
+margin-bottom:20px;
+}
+
+.sidebar button{
+width:100%;
+margin-top:10px;
+}
+
+/* MAIN */
+.main{
+flex:1;
+padding:20px;
+}
+
+/* CARDS */
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:15px;
+box-shadow:0 4px 15px rgba(0,0,0,0.2);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+/* LOGIN */
 #loginScreen{
 position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:#eef2ff;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(135deg,#667eea,#764ba2);
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 z-index:9999;
 }
-input{padding:10px;margin:5px;}
-#userInfo{padding:10px;font-weight:bold;}
+
+input{
+padding:10px;
+margin:5px;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#667eea;
+color:white;
+}
+
+.emergency{
+position:fixed;
+bottom:20px;
+right:20px;
+background:red;
+padding:20px;
+border-radius:50%;
+color:white;
+font-size:20px;
+}
 </style>
 
 </head>
 <body>
 
-<!-- 🔐 LOGIN -->
+<!-- LOGIN -->
 <div id="loginScreen">
-  <h2>🔐 VidaPlena+ Login</h2>
-  <input id="user" placeholder="Usuário">
-  <input id="pass" type="password" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
-  <button onclick="cadastro()">Cadastrar</button>
-  <p id="msg"></p>
+<h2>🔐 VidaPlena+ Premium</h2>
+<input id="user" placeholder="Usuário">
+<input id="pass" type="password" placeholder="Senha">
+<button onclick="login()">Entrar</button>
+<button onclick="cadastro()">Cadastrar</button>
+<p id="msg"></p>
 </div>
 
-<!-- 👤 USUÁRIO -->
-<div id="userInfo"></div>
+<!-- SIDEBAR -->
+<div class="sidebar">
+<h2>VidaPlena+</h2>
+<p id="userInfo"></p>
 
-<!-- ❤️ BATIMENTOS -->
+<button onclick="logout()">🚪 Sair</button>
+<button onclick="limparDados()">🗑️ Reset</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
 <div class="card">
-<h3>❤️ Batimentos</h3>
+<h3>❤️ Monitoramento</h3>
 <p id="bpm"></p>
-</div>
-
-<!-- 🤖 IA -->
-<div class="card">
-<h3>🤖 IA</h3>
 <p id="ia"></p>
 </div>
 
-<!-- 📋 PRONTUÁRIO -->
+<div class="card">
+<h3>📊 Gráfico de Batimentos</h3>
+<canvas id="grafico"></canvas>
+</div>
+
 <div class="card">
 <h3>📋 Prontuário</h3>
 <input id="nota">
@@ -61,7 +140,6 @@ input{padding:10px;margin:5px;}
 <ul id="lista"></ul>
 </div>
 
-<!-- 🦷 ODONTO -->
 <div class="card">
 <h3>🦷 Odontologia</h3>
 <input id="dente">
@@ -69,145 +147,108 @@ input{padding:10px;margin:5px;}
 <ul id="listaOdonto"></ul>
 </div>
 
-<!-- ⚙️ AÇÕES -->
-<div class="card">
-<button onclick="logout()">🚪 Sair</button>
-<button onclick="limparDados()">🗑️ Limpar dados</button>
 </div>
 
-<!-- 🚨 EMERGÊNCIA -->
 <button class="emergency" onclick="emergencia()">🚨</button>
 
 <script>
 
-// 🔐 CADASTRO
+// LOGIN
 function cadastro(){
-let usuario=document.getElementById("user").value;
-let senha=document.getElementById("pass").value;
-
-if(!usuario || !senha){
-document.getElementById("msg").innerText="Preencha tudo!";
-return;
+let u=user.value,p=pass.value;
+if(!u||!p){msg.innerText="Preencha!";return;}
+localStorage.setItem("user",u);
+localStorage.setItem("pass",p);
+msg.innerText="Cadastrado!";
 }
 
-localStorage.setItem("user",usuario);
-localStorage.setItem("pass",senha);
-document.getElementById("msg").innerText="Cadastro realizado!";
-}
-
-// 🔐 LOGIN
 function login(){
-let usuario=document.getElementById("user").value;
-let senha=document.getElementById("pass").value;
-
-if(usuario===localStorage.getItem("user") && senha===localStorage.getItem("pass")){
-document.getElementById("loginScreen").style.display="none";
-mostrarUsuario();
-}else{
-document.getElementById("msg").innerText="Usuário ou senha incorretos!";
-}
+if(user.value===localStorage.getItem("user") && pass.value===localStorage.getItem("pass")){
+loginScreen.style.display="none";
+userInfo.innerText="👤 "+user.value;
+}else{msg.innerText="Erro";}
 }
 
-// 👤 MOSTRAR USUÁRIO
-function mostrarUsuario(){
-let user=localStorage.getItem("user");
-document.getElementById("userInfo").innerText="👤 Usuário: "+user;
-}
+// LOGOUT
+function logout(){loginScreen.style.display="flex";}
 
-// 🚪 LOGOUT
-function logout(){
-document.getElementById("loginScreen").style.display="flex";
-}
+// LIMPAR
+function limparDados(){localStorage.clear();location.reload();}
 
-// ❤️ MONITORAMENTO + IA MELHORADA
+// BATIMENTOS + IA
+let dadosGrafico=[];
+let chart=new Chart(document.getElementById("grafico"),{
+type:"line",
+data:{
+labels:[],
+datasets:[{label:"BPM",data:[]}]
+}
+});
+
 setInterval(()=>{
 let bpm=Math.floor(Math.random()*40)+60;
-document.getElementById("bpm").innerText=bpm+" bpm";
+bpmEl=bpm+" bpm";
+document.getElementById("bpm").innerText=bpmEl;
 
-if(bpm > 110){
-document.getElementById("ia").innerText="🚨 Alto risco";
-}else if(bpm > 90){
-document.getElementById("ia").innerText="⚠️ Atenção";
-}else{
-document.getElementById("ia").innerText="✅ Normal";
+let status="Normal";
+if(bpm>110)status="🚨 Alto risco";
+else if(bpm>90)status="⚠️ Atenção";
+
+document.getElementById("ia").innerText=status;
+
+// atualizar gráfico
+chart.data.labels.push("");
+chart.data.datasets[0].data.push(bpm);
+if(chart.data.labels.length>10){
+chart.data.labels.shift();
+chart.data.datasets[0].data.shift();
 }
+chart.update();
+
 },2000);
 
-// 📋 PRONTUÁRIO COM DATA
+// PRONTUÁRIO
 function salvar(){
-let dados=JSON.parse(localStorage.getItem("prontuario"))||[];
-
-let texto=document.getElementById("nota").value;
-let data=new Date().toLocaleString();
-
-dados.push(data+" → "+texto);
-
-localStorage.setItem("prontuario",JSON.stringify(dados));
+let dados=JSON.parse(localStorage.getItem("p"))||[];
+dados.push(new Date().toLocaleString()+" → "+nota.value);
+localStorage.setItem("p",JSON.stringify(dados));
 mostrar();
 }
 
-// MOSTRAR PRONTUÁRIO
 function mostrar(){
-let lista=document.getElementById("lista");
 lista.innerHTML="";
-let dados=JSON.parse(localStorage.getItem("prontuario"))||[];
-dados.forEach(item=>{
-let li=document.createElement("li");
-li.innerText=item;
-lista.appendChild(li);
+(JSON.parse(localStorage.getItem("p"))||[]).forEach(i=>{
+let li=document.createElement("li");li.innerText=i;lista.appendChild(li);
 });
 }
 
-// 🦷 ODONTO
+// ODONTO
 function odonto(){
-let texto=document.getElementById("dente").value;
-let diag=texto.includes("dor")?"Possível cárie":"Avaliação";
-let dados=JSON.parse(localStorage.getItem("odonto"))||[];
-
-let data=new Date().toLocaleString();
-
-dados.push(data+" → "+texto+" → "+diag);
-
-localStorage.setItem("odonto",JSON.stringify(dados));
+let d=dente.value;
+let diag=d.includes("dor")?"Cárie":"OK";
+let dados=JSON.parse(localStorage.getItem("o"))||[];
+dados.push(new Date().toLocaleString()+" → "+d+" → "+diag);
+localStorage.setItem("o",JSON.stringify(dados));
 mostrarOdonto();
 }
 
-// MOSTRAR ODONTO
 function mostrarOdonto(){
-let lista=document.getElementById("listaOdonto");
-lista.innerHTML="";
-let dados=JSON.parse(localStorage.getItem("odonto"))||[];
-dados.forEach(item=>{
-let li=document.createElement("li");
-li.innerText=item;
-lista.appendChild(li);
+listaOdonto.innerHTML="";
+(JSON.parse(localStorage.getItem("o"))||[]).forEach(i=>{
+let li=document.createElement("li");li.innerText=i;listaOdonto.appendChild(li);
 });
 }
 
-// 🚨 EMERGÊNCIA COM REGISTRO
+// EMERGÊNCIA
 function emergencia(){
-let dados=JSON.parse(localStorage.getItem("emergencia"))||[];
-let data=new Date().toLocaleString();
-
-dados.push("🚨 Emergência acionada em: "+data);
-localStorage.setItem("emergencia",JSON.stringify(dados));
-
-alert("🚨 Emergência registrada!");
+alert("🚨 Emergência enviada!");
 }
 
-// 🗑️ LIMPAR DADOS
-function limparDados(){
-localStorage.clear();
-alert("Dados apagados!");
-location.reload();
-}
-
-// 🔄 CARREGAR
-window.onload=function(){
+// LOAD
+window.onload=()=>{
 mostrar();
 mostrarOdonto();
 }
-
 </script>
 
 </body>
