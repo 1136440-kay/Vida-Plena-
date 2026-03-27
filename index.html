@@ -12,11 +12,9 @@ body{
 margin:0;
 font-family:'Segoe UI';
 background:linear-gradient(135deg,#667eea,#764ba2);
-color:#333;
 display:flex;
 }
 
-/* SIDEBAR */
 .sidebar{
 width:220px;
 background:#1e1e2f;
@@ -25,36 +23,24 @@ padding:20px;
 height:100vh;
 }
 
-.sidebar h2{
-margin-bottom:20px;
-}
-
 .sidebar button{
 width:100%;
 margin-top:10px;
 }
 
-/* MAIN */
 .main{
 flex:1;
 padding:20px;
 }
 
-/* CARDS */
 .card{
 background:white;
 padding:20px;
 border-radius:15px;
 margin-bottom:15px;
 box-shadow:0 4px 15px rgba(0,0,0,0.2);
-transition:0.3s;
 }
 
-.card:hover{
-transform:translateY(-5px);
-}
-
-/* LOGIN */
 #loginScreen{
 position:fixed;
 top:0;
@@ -67,6 +53,40 @@ flex-direction:column;
 justify-content:center;
 align-items:center;
 z-index:9999;
+}
+
+#ajudaScreen{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:white;
+overflow:auto;
+padding:20px;
+z-index:9999;
+}
+
+#buscaAjuda{
+width:100%;
+padding:10px;
+margin-bottom:15px;
+border-radius:10px;
+border:1px solid #ccc;
+}
+
+.item{
+background:#f4f6ff;
+margin-bottom:10px;
+padding:10px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.item p{
+display:none;
+margin-top:5px;
 }
 
 input{
@@ -93,21 +113,50 @@ background:red;
 padding:20px;
 border-radius:50%;
 color:white;
-font-size:20px;
 }
 </style>
-
 </head>
+
 <body>
 
 <!-- LOGIN -->
 <div id="loginScreen">
 <h2>🔐 VidaPlena+ Premium</h2>
+
+<input id="cpf" placeholder="CPF">
+<button onclick="buscarDados()">🔎 Buscar dados</button>
+
 <input id="user" placeholder="Usuário">
 <input id="pass" type="password" placeholder="Senha">
+
 <button onclick="login()">Entrar</button>
 <button onclick="cadastro()">Cadastrar</button>
+
 <p id="msg"></p>
+</div>
+
+<!-- CENTRAL DE AJUDA -->
+<div id="ajudaScreen">
+
+<h2>📘 Central de Ajuda</h2>
+
+<input id="buscaAjuda" placeholder="🔎 Buscar ajuda..." onkeyup="filtrarAjuda()">
+
+<div id="faq">
+
+<div class="item"><h3 onclick="toggle(this)">🔐 Cadastro</h3><p>Criar usuário e senha.</p></div>
+<div class="item"><h3 onclick="toggle(this)">🔓 Login</h3><p>Acessa o sistema.</p></div>
+<div class="item"><h3 onclick="toggle(this)">❤️ Monitoramento</h3><p>Batimentos em tempo real.</p></div>
+<div class="item"><h3 onclick="toggle(this)">🤖 IA</h3><p>Analisa risco.</p></div>
+<div class="item"><h3 onclick="toggle(this)">📋 Prontuário</h3><p>Registro clínico.</p></div>
+<div class="item"><h3 onclick="toggle(this)">🦷 Odontologia</h3><p>Análise de sintomas.</p></div>
+<div class="item"><h3 onclick="toggle(this)">📅 Agendamento</h3><p>Marcar consultas.</p></div>
+<div class="item"><h3 onclick="toggle(this)">🚨 Emergência</h3><p>Alerta imediato.</p></div>
+<div class="item"><h3 onclick="toggle(this)">🗑️ Reset</h3><p>Apaga dados.</p></div>
+
+</div>
+
+<button onclick="fecharAjuda()">❌ Fechar</button>
 </div>
 
 <!-- SIDEBAR -->
@@ -115,6 +164,7 @@ font-size:20px;
 <h2>VidaPlena+</h2>
 <p id="userInfo"></p>
 
+<button onclick="abrirAjuda()">❓ Ajuda</button>
 <button onclick="logout()">🚪 Sair</button>
 <button onclick="limparDados()">🗑️ Reset</button>
 </div>
@@ -129,7 +179,7 @@ font-size:20px;
 </div>
 
 <div class="card">
-<h3>📊 Gráfico de Batimentos</h3>
+<h3>📊 Gráfico</h3>
 <canvas id="grafico"></canvas>
 </div>
 
@@ -147,18 +197,37 @@ font-size:20px;
 <ul id="listaOdonto"></ul>
 </div>
 
+<div class="card">
+<h3>📅 Agendamento</h3>
+<button onclick="buscarLocais()">Buscar locais</button>
+<ul id="locais"></ul>
+</div>
+
 </div>
 
 <button class="emergency" onclick="emergencia()">🚨</button>
 
 <script>
 
+// 🔥 SUS SIMULADO
+const bancoDados=[
+{cpf:"123",nome:"Maria Silva",idade:68,condicao:"Hipertensão"},
+{cpf:"456",nome:"João Souza",idade:72,condicao:"Diabetes"}
+];
+
+function buscarDados(){
+let pessoa=bancoDados.find(p=>p.cpf===cpf.value);
+if(pessoa){
+user.value=pessoa.nome;
+alert("Nome: "+pessoa.nome+"\nIdade: "+pessoa.idade+"\nCondição: "+pessoa.condicao);
+}else alert("CPF não encontrado");
+}
+
 // LOGIN
 function cadastro(){
-let u=user.value,p=pass.value;
-if(!u||!p){msg.innerText="Preencha!";return;}
-localStorage.setItem("user",u);
-localStorage.setItem("pass",p);
+if(!user.value||!pass.value){msg.innerText="Preencha!";return;}
+localStorage.setItem("user",user.value);
+localStorage.setItem("pass",pass.value);
 msg.innerText="Cadastrado!";
 }
 
@@ -166,55 +235,47 @@ function login(){
 if(user.value===localStorage.getItem("user") && pass.value===localStorage.getItem("pass")){
 loginScreen.style.display="none";
 userInfo.innerText="👤 "+user.value;
-}else{msg.innerText="Erro";}
+}else msg.innerText="Erro";
 }
 
-// LOGOUT
 function logout(){loginScreen.style.display="flex";}
-
-// LIMPAR
 function limparDados(){localStorage.clear();location.reload();}
 
-// BATIMENTOS + IA
-let dadosGrafico=[];
-let chart=new Chart(document.getElementById("grafico"),{
-type:"line",
-data:{
-labels:[],
-datasets:[{label:"BPM",data:[]}]
+// AJUDA
+function abrirAjuda(){ajudaScreen.style.display="block";}
+function fecharAjuda(){ajudaScreen.style.display="none";}
+function toggle(el){
+let p=el.nextElementSibling;
+p.style.display=p.style.display==="block"?"none":"block";
 }
+function filtrarAjuda(){
+let t=buscaAjuda.value.toLowerCase();
+document.querySelectorAll(".item").forEach(i=>{
+i.style.display=i.innerText.toLowerCase().includes(t)?"block":"none";
 });
+}
 
+// GRÁFICO
+let chart=new Chart(grafico,{type:"line",data:{labels:[],datasets:[{label:"BPM",data:[]}]}});
 setInterval(()=>{
 let bpm=Math.floor(Math.random()*40)+60;
 bpmEl=bpm+" bpm";
-document.getElementById("bpm").innerText=bpmEl;
-
-let status="Normal";
-if(bpm>110)status="🚨 Alto risco";
-else if(bpm>90)status="⚠️ Atenção";
-
-document.getElementById("ia").innerText=status;
-
-// atualizar gráfico
+bpm.innerText=bpmEl;
+let s=bpm>110?"🚨 Alto risco":bpm>90?"⚠️ Atenção":"Normal";
+ia.innerText=s;
 chart.data.labels.push("");
 chart.data.datasets[0].data.push(bpm);
-if(chart.data.labels.length>10){
-chart.data.labels.shift();
-chart.data.datasets[0].data.shift();
-}
+if(chart.data.labels.length>10){chart.data.labels.shift();chart.data.datasets[0].data.shift();}
 chart.update();
-
 },2000);
 
 // PRONTUÁRIO
 function salvar(){
-let dados=JSON.parse(localStorage.getItem("p"))||[];
-dados.push(new Date().toLocaleString()+" → "+nota.value);
-localStorage.setItem("p",JSON.stringify(dados));
+let d=JSON.parse(localStorage.getItem("p"))||[];
+d.push(new Date().toLocaleString()+" → "+nota.value);
+localStorage.setItem("p",JSON.stringify(d));
 mostrar();
 }
-
 function mostrar(){
 lista.innerHTML="";
 (JSON.parse(localStorage.getItem("p"))||[]).forEach(i=>{
@@ -226,12 +287,11 @@ let li=document.createElement("li");li.innerText=i;lista.appendChild(li);
 function odonto(){
 let d=dente.value;
 let diag=d.includes("dor")?"Cárie":"OK";
-let dados=JSON.parse(localStorage.getItem("o"))||[];
-dados.push(new Date().toLocaleString()+" → "+d+" → "+diag);
-localStorage.setItem("o",JSON.stringify(dados));
+let o=JSON.parse(localStorage.getItem("o"))||[];
+o.push(new Date().toLocaleString()+" → "+d+" → "+diag);
+localStorage.setItem("o",JSON.stringify(o));
 mostrarOdonto();
 }
-
 function mostrarOdonto(){
 listaOdonto.innerHTML="";
 (JSON.parse(localStorage.getItem("o"))||[]).forEach(i=>{
@@ -239,16 +299,30 @@ let li=document.createElement("li");li.innerText=i;listaOdonto.appendChild(li);
 });
 }
 
-// EMERGÊNCIA
-function emergencia(){
-alert("🚨 Emergência enviada!");
+// AGENDAMENTO
+const servicos=[{nome:"Clínica Médica Vida"},{nome:"OdontoCare"}];
+function buscarLocais(){navigator.geolocation.getCurrentPosition(()=>mostrarLocais());}
+function mostrarLocais(){
+locais.innerHTML="";
+servicos.forEach(s=>{
+let li=document.createElement("li");
+li.innerHTML=`${s.nome} <button onclick="agendar('${s.nome}')">Agendar</button>`;
+locais.appendChild(li);
+});
+}
+function agendar(n){
+let d=new Date().toLocaleString();
+let a=JSON.parse(localStorage.getItem("agenda"))||[];
+a.push("Consulta em "+n+" → "+d);
+localStorage.setItem("agenda",JSON.stringify(a));
+alert("Agendado!");
 }
 
+// EMERGÊNCIA
+function emergencia(){alert("🚨 Emergência acionada!");}
+
 // LOAD
-window.onload=()=>{
-mostrar();
-mostrarOdonto();
-}
+window.onload=()=>{mostrar();mostrarOdonto();}
 </script>
 
 </body>
