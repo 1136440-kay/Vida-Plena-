@@ -45,7 +45,6 @@ img{
 width:100%;
 border-radius:10px;
 margin-bottom:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
 
 #loginScreen{
@@ -60,40 +59,6 @@ flex-direction:column;
 justify-content:center;
 align-items:center;
 z-index:9999;
-}
-
-#ajudaScreen{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:white;
-overflow:auto;
-padding:20px;
-z-index:9999;
-}
-
-#buscaAjuda{
-width:100%;
-padding:10px;
-margin-bottom:15px;
-border-radius:10px;
-border:1px solid #ccc;
-}
-
-.item{
-background:#f4f6ff;
-margin-bottom:10px;
-padding:10px;
-border-radius:10px;
-cursor:pointer;
-}
-
-.item p{
-display:none;
-margin-top:5px;
 }
 
 input{
@@ -142,24 +107,11 @@ color:white;
 <p id="msg"></p>
 </div>
 
-<!-- AJUDA -->
-<div id="ajudaScreen">
-<h2>📘 Central de Ajuda</h2>
-<input id="buscaAjuda" placeholder="🔎 Buscar ajuda..." onkeyup="filtrarAjuda()">
-<div id="faq">
-<div class="item"><h3 onclick="toggle(this)">❤️ Monitoramento</h3><p>Controle dos sinais vitais em tempo real.</p></div>
-<div class="item"><h3 onclick="toggle(this)">📋 Prontuário</h3><p>Histórico clínico do paciente.</p></div>
-<div class="item"><h3 onclick="toggle(this)">🦷 Odontologia</h3><p>Acompanhamento da saúde bucal.</p></div>
-<div class="item"><h3 onclick="toggle(this)">📅 Agendamento</h3><p>Consultas domiciliares.</p></div>
-</div>
-<button onclick="fecharAjuda()">❌ Fechar</button>
-</div>
-
 <!-- SIDEBAR -->
 <div class="sidebar">
 <h2>VidaPlena+</h2>
 <p id="userInfo"></p>
-<button onclick="abrirAjuda()">❓ Ajuda</button>
+
 <button onclick="logout()">🚪 Sair</button>
 <button onclick="limparDados()">🗑️ Reset</button>
 </div>
@@ -168,66 +120,78 @@ color:white;
 <div class="main">
 
 <div class="card">
-<img src="https://images.unsplash.com/photo-1580281657527-47c55b5d1c0d">
 <h2>🏥 VidaPlena+ Saúde Digital</h2>
 <p>Cuidado remoto e monitoramento inteligente.</p>
 </div>
 
 <div class="card">
-<img src="https://images.unsplash.com/photo-1581595219315-a187dd40c322">
 <h3>❤️ Monitoramento</h3>
 <p id="bpm"></p>
 <p id="ia"></p>
-<p><b>Informação:</b> Batimentos normais: 60–100 bpm.</p>
 </div>
 
 <div class="card">
-<img src="https://images.unsplash.com/photo-1559757175-5700dde675bc">
 <h3>📊 Gráfico</h3>
 <canvas id="grafico"></canvas>
 </div>
 
 <div class="card">
-<img src="https://images.unsplash.com/photo-1588776814546-ec7e7c2b2c2c">
 <h3>📋 Prontuário</h3>
 <input id="nota">
 <button onclick="salvar()">Salvar</button>
 <ul id="lista"></ul>
-<p><b>Informação:</b> Registro contínuo melhora o cuidado clínico.</p>
 </div>
 
 <div class="card">
-<img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db">
 <h3>🦷 Odontologia</h3>
 <input id="dente">
 <button onclick="odonto()">Registrar</button>
 <ul id="listaOdonto"></ul>
-<p><b>Informação:</b> Escovar 3x ao dia previne cáries.</p>
 </div>
 
 <div class="card">
-<img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d">
 <h3>📅 Agendamento</h3>
 <button onclick="buscarLocais()">Buscar locais</button>
 <ul id="locais"></ul>
-<p><b>Informação:</b> Atendimento domiciliar aumenta acessibilidade.</p>
 </div>
 
-<!-- 🔥 NOVO BLOCO EDUCATIVO -->
+<!-- 🤖 IA -->
 <div class="card">
-<h2>📚 Educação em Saúde</h2>
+<h3>🤖 Assistente de Saúde</h3>
+<input id="perguntaIA" placeholder="Digite sua dúvida...">
+<button onclick="responderIA()">Perguntar</button>
+<p id="respostaIA"></p>
+</div>
 
-<p><b>❤️ Cardiovascular:</b> Exercícios e alimentação saudável previnem doenças.</p>
+<!-- 💊 MEDICAMENTOS -->
+<div class="card">
+<h3>💊 Medicamentos</h3>
+<input id="medicamento" placeholder="Digite o medicamento">
+<button onclick="buscarMedicamento()">Buscar</button>
+<p id="infoMedicamento"></p>
+</div>
 
-<p><b>🤖 Prevenção:</b> Monitoramento contínuo reduz riscos.</p>
+<!-- 🍎 ALIMENTAÇÃO E EXERCÍCIO -->
+<div class="card">
+<h3>🍎 Alimentação Saudável</h3>
+<button onclick="gerarDieta()">Gerar dica</button>
+<p id="dieta"></p>
+<ul id="listaDieta"></ul>
+</div>
 
-<p><b>📋 Prontuário:</b> Garante histórico seguro do paciente.</p>
+<div class="card">
+<h3>🏃 Exercícios para Idosos</h3>
+<button onclick="gerarExercicio()">Gerar exercício</button>
+<p id="exercicio"></p>
+<ul id="listaExercicio"></ul>
+</div>
 
-<p><b>🦷 Saúde Bucal:</b> Higiene adequada evita doenças.</p>
-
-<p><b>📅 Consultas:</b> Facilita acesso ao cuidado.</p>
-
-<p><b>🚨 Emergência:</b> Procure ajuda imediata em sintomas graves.</p>
+<!-- 🏥 SUS DIGITAL -->
+<div class="card">
+<h3>🏥 Integração SUS Digital</h3>
+<input id="cpfSus" placeholder="Digite o CPF">
+<button onclick="consultarSUS()">🔎 Consultar SUS</button>
+<div id="dadosSus"></div>
 </div>
 
 </div>
@@ -236,7 +200,7 @@ color:white;
 
 <script>
 
-// SUS SIMULADO
+// SUS SIMULADO LOCAL
 const bancoDados=[
 {cpf:"123",nome:"Maria Silva",idade:68,condicao:"Hipertensão"},
 {cpf:"456",nome:"João Souza",idade:72,condicao:"Diabetes"}
@@ -268,37 +232,20 @@ userInfo.innerText="👤 "+user.value;
 function logout(){loginScreen.style.display="flex";}
 function limparDados(){localStorage.clear();location.reload();}
 
-// AJUDA
-function abrirAjuda(){ajudaScreen.style.display="block";}
-function fecharAjuda(){ajudaScreen.style.display="none";}
-function toggle(el){
-let p=el.nextElementSibling;
-p.style.display=p.style.display==="block"?"none":"block";
-}
-function filtrarAjuda(){
-let t=buscaAjuda.value.toLowerCase();
-document.querySelectorAll(".item").forEach(i=>{
-i.style.display=i.innerText.toLowerCase().includes(t)?"block":"none";
-});
-}
-
 // GRÁFICO
 let chart=new Chart(grafico,{type:"line",data:{labels:[],datasets:[{label:"BPM",data:[]}]}});
 setInterval(()=>{
 let bpm=Math.floor(Math.random()*40)+60;
-document.getElementById("bpm").innerText=bpm+" bpm";
-
-let s=bpm>110?"🚨 Alto risco":bpm>90?"⚠️ Atenção":"Normal";
-document.getElementById("ia").innerText=s;
+document.getElementById("bpm").innerText = bpm+" bpm";
+let s = bpm>110?"🚨 Alto risco":bpm>90?"⚠️ Atenção":"Normal";
+document.getElementById("ia").innerText = s;
 
 chart.data.labels.push("");
 chart.data.datasets[0].data.push(bpm);
-
 if(chart.data.labels.length>10){
 chart.data.labels.shift();
 chart.data.datasets[0].data.shift();
 }
-
 chart.update();
 },2000);
 
@@ -354,7 +301,141 @@ alert("Agendado!");
 // EMERGÊNCIA
 function emergencia(){alert("🚨 Emergência acionada!");}
 
-window.onload=()=>{mostrar();mostrarOdonto();}
+// 🤖 IA
+function responderIA(){
+let p=perguntaIA.value.toLowerCase();
+let r="Não entendi.";
+if(p.includes("dor")) r="Pode indicar inflamação.";
+else if(p.includes("pressão")) r="Controle alimentação e procure médico.";
+else if(p.includes("diabetes")) r="Controle glicemia.";
+else if(p.includes("coração")) r="Monitore batimentos.";
+respostaIA.innerText=r;
+}
+
+// MEDICAMENTOS
+const meds={
+"losartana":"Pressão alta",
+"metformina":"Diabetes",
+"dipirona":"Dor",
+"ibuprofeno":"Inflamação"
+};
+function buscarMedicamento(){
+let m=medicamento.value.toLowerCase();
+infoMedicamento.innerText=meds[m]||"Não encontrado";
+}
+
+// 🍎 BANCO DE DADOS DE DIETA
+const dietas = [
+"Consuma frutas diariamente (banana, maçã, mamão)",
+"Evite excesso de sal para controle da pressão",
+"Beba pelo menos 2 litros de água por dia",
+"Inclua vegetais verdes (couve, espinafre)",
+"Prefira alimentos integrais",
+"Evite alimentos ultraprocessados",
+"Consuma proteínas leves como peixe e frango",
+"Controle o açúcar para prevenir diabetes",
+"Inclua cálcio (leite, queijo) para ossos",
+"Faça refeições em horários regulares"
+];
+
+// 🏃 BANCO DE DADOS DE EXERCÍCIOS
+const exercicios = [
+"Caminhada leve por 30 minutos",
+"Alongamento ao acordar",
+"Exercícios de equilíbrio (ficar em um pé só)",
+"Subir escadas com cuidado",
+"Movimentos de braço com peso leve",
+"Yoga ou alongamento leve",
+"Dança leve para coordenação",
+"Exercícios de respiração",
+"Pedalar bicicleta ergométrica",
+"Fisioterapia preventiva"
+];
+
+// GERAR DIETA
+function gerarDieta(){
+let dica = dietas[Math.floor(Math.random()*dietas.length)];
+document.getElementById("dieta").innerText = dica;
+let lista = JSON.parse(localStorage.getItem("dieta")) || [];
+lista.push(dica);
+localStorage.setItem("dieta", JSON.stringify(lista));
+mostrarDieta();
+}
+
+// MOSTRAR DIETA
+function mostrarDieta(){
+let listaEl = document.getElementById("listaDieta");
+listaEl.innerHTML = "";
+(JSON.parse(localStorage.getItem("dieta")) || []).forEach(item=>{
+let li = document.createElement("li");
+li.innerText = item;
+listaEl.appendChild(li);
+});
+}
+
+// GERAR EXERCÍCIO
+function gerarExercicio(){
+let ex = exercicios[Math.floor(Math.random()*exercicios.length)];
+document.getElementById("exercicio").innerText = ex;
+let lista = JSON.parse(localStorage.getItem("exercicio")) || [];
+lista.push(ex);
+localStorage.setItem("exercicio", JSON.stringify(lista));
+mostrarExercicio();
+}
+
+// MOSTRAR EXERCÍCIO
+function mostrarExercicio(){
+let listaEl = document.getElementById("listaExercicio");
+listaEl.innerHTML = "";
+(JSON.parse(localStorage.getItem("exercicio")) || []).forEach(item=>{
+let li = document.createElement("li");
+li.innerText = item;
+listaEl.appendChild(li);
+});
+}
+
+// 🔹 SUS DIGITAL SIMULADO
+const SUS_API_SIMULADA = [
+{cpf:"123",nome:"Maria Silva",idade:68,cartaoSus:"898 0011 2233 4455",condicoes:["Hipertensão"],medicamentos:["Losartana"],ultimaConsulta:"10/02/2026"},
+{cpf:"456",nome:"João Souza",idade:72,cartaoSus:"898 0099 8877 6655",condicoes:["Diabetes"],medicamentos:["Metformina"],ultimaConsulta:"05/01/2026"}
+];
+
+function consultarSUS(){
+let cpf = document.getElementById("cpfSus").value;
+let paciente = SUS_API_SIMULADA.find(p => p.cpf === cpf);
+let area = document.getElementById("dadosSus");
+
+if(paciente){
+area.innerHTML = `
+<h4>👤 ${paciente.nome}</h4>
+<p><b>Idade:</b> ${paciente.idade}</p>
+<p><b>Cartão SUS:</b> ${paciente.cartaoSus}</p>
+<p><b>Condições:</b> ${paciente.condicoes.join(", ")}</p>
+<p><b>Medicamentos:</b> ${paciente.medicamentos.join(", ")}</p>
+<p><b>Última consulta:</b> ${paciente.ultimaConsulta}</p>
+<button onclick="importarProntuario('${paciente.nome}')">📥 Importar para prontuário</button>
+`;
+}else{
+area.innerHTML = "<p>❌ Paciente não encontrado no SUS</p>";
+}
+}
+
+function importarProntuario(nome){
+let dados = JSON.parse(localStorage.getItem("p")) || [];
+dados.push("📥 Dados importados do SUS → " + nome);
+localStorage.setItem("p", JSON.stringify(dados));
+mostrar();
+alert("✅ Dados importados para o prontuário!");
+}
+
+// LOAD
+window.onload = ()=>{
+mostrar();
+mostrarOdonto();
+mostrarDieta();
+mostrarExercicio();
+}
+
 </script>
 
 </body>
