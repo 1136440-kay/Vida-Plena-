@@ -41,6 +41,13 @@ margin-bottom:15px;
 box-shadow:0 4px 15px rgba(0,0,0,0.2);
 }
 
+img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
 #loginScreen{
 position:fixed;
 top:0;
@@ -135,27 +142,16 @@ color:white;
 <p id="msg"></p>
 </div>
 
-<!-- CENTRAL DE AJUDA -->
+<!-- AJUDA -->
 <div id="ajudaScreen">
-
 <h2>📘 Central de Ajuda</h2>
-
 <input id="buscaAjuda" placeholder="🔎 Buscar ajuda..." onkeyup="filtrarAjuda()">
-
 <div id="faq">
-
-<div class="item"><h3 onclick="toggle(this)">🔐 Cadastro</h3><p>Criar usuário e senha.</p></div>
-<div class="item"><h3 onclick="toggle(this)">🔓 Login</h3><p>Acessa o sistema.</p></div>
-<div class="item"><h3 onclick="toggle(this)">❤️ Monitoramento</h3><p>Batimentos em tempo real.</p></div>
-<div class="item"><h3 onclick="toggle(this)">🤖 IA</h3><p>Analisa risco.</p></div>
-<div class="item"><h3 onclick="toggle(this)">📋 Prontuário</h3><p>Registro clínico.</p></div>
-<div class="item"><h3 onclick="toggle(this)">🦷 Odontologia</h3><p>Análise de sintomas.</p></div>
-<div class="item"><h3 onclick="toggle(this)">📅 Agendamento</h3><p>Marcar consultas.</p></div>
-<div class="item"><h3 onclick="toggle(this)">🚨 Emergência</h3><p>Alerta imediato.</p></div>
-<div class="item"><h3 onclick="toggle(this)">🗑️ Reset</h3><p>Apaga dados.</p></div>
-
+<div class="item"><h3 onclick="toggle(this)">❤️ Monitoramento</h3><p>Controle dos sinais vitais em tempo real.</p></div>
+<div class="item"><h3 onclick="toggle(this)">📋 Prontuário</h3><p>Histórico clínico do paciente.</p></div>
+<div class="item"><h3 onclick="toggle(this)">🦷 Odontologia</h3><p>Acompanhamento da saúde bucal.</p></div>
+<div class="item"><h3 onclick="toggle(this)">📅 Agendamento</h3><p>Consultas domiciliares.</p></div>
 </div>
-
 <button onclick="fecharAjuda()">❌ Fechar</button>
 </div>
 
@@ -163,7 +159,6 @@ color:white;
 <div class="sidebar">
 <h2>VidaPlena+</h2>
 <p id="userInfo"></p>
-
 <button onclick="abrirAjuda()">❓ Ajuda</button>
 <button onclick="logout()">🚪 Sair</button>
 <button onclick="limparDados()">🗑️ Reset</button>
@@ -173,34 +168,66 @@ color:white;
 <div class="main">
 
 <div class="card">
-<h3>❤️ Monitoramento</h3>
-<p id="bpm"></p>
-<p id="ia"></p>
+<img src="https://images.unsplash.com/photo-1580281657527-47c55b5d1c0d">
+<h2>🏥 VidaPlena+ Saúde Digital</h2>
+<p>Cuidado remoto e monitoramento inteligente.</p>
 </div>
 
 <div class="card">
+<img src="https://images.unsplash.com/photo-1581595219315-a187dd40c322">
+<h3>❤️ Monitoramento</h3>
+<p id="bpm"></p>
+<p id="ia"></p>
+<p><b>Informação:</b> Batimentos normais: 60–100 bpm.</p>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1559757175-5700dde675bc">
 <h3>📊 Gráfico</h3>
 <canvas id="grafico"></canvas>
 </div>
 
 <div class="card">
+<img src="https://images.unsplash.com/photo-1588776814546-ec7e7c2b2c2c">
 <h3>📋 Prontuário</h3>
 <input id="nota">
 <button onclick="salvar()">Salvar</button>
 <ul id="lista"></ul>
+<p><b>Informação:</b> Registro contínuo melhora o cuidado clínico.</p>
 </div>
 
 <div class="card">
+<img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db">
 <h3>🦷 Odontologia</h3>
 <input id="dente">
 <button onclick="odonto()">Registrar</button>
 <ul id="listaOdonto"></ul>
+<p><b>Informação:</b> Escovar 3x ao dia previne cáries.</p>
 </div>
 
 <div class="card">
+<img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d">
 <h3>📅 Agendamento</h3>
 <button onclick="buscarLocais()">Buscar locais</button>
 <ul id="locais"></ul>
+<p><b>Informação:</b> Atendimento domiciliar aumenta acessibilidade.</p>
+</div>
+
+<!-- 🔥 NOVO BLOCO EDUCATIVO -->
+<div class="card">
+<h2>📚 Educação em Saúde</h2>
+
+<p><b>❤️ Cardiovascular:</b> Exercícios e alimentação saudável previnem doenças.</p>
+
+<p><b>🤖 Prevenção:</b> Monitoramento contínuo reduz riscos.</p>
+
+<p><b>📋 Prontuário:</b> Garante histórico seguro do paciente.</p>
+
+<p><b>🦷 Saúde Bucal:</b> Higiene adequada evita doenças.</p>
+
+<p><b>📅 Consultas:</b> Facilita acesso ao cuidado.</p>
+
+<p><b>🚨 Emergência:</b> Procure ajuda imediata em sintomas graves.</p>
 </div>
 
 </div>
@@ -209,7 +236,7 @@ color:white;
 
 <script>
 
-// 🔥 SUS SIMULADO
+// SUS SIMULADO
 const bancoDados=[
 {cpf:"123",nome:"Maria Silva",idade:68,condicao:"Hipertensão"},
 {cpf:"456",nome:"João Souza",idade:72,condicao:"Diabetes"}
@@ -259,13 +286,19 @@ i.style.display=i.innerText.toLowerCase().includes(t)?"block":"none";
 let chart=new Chart(grafico,{type:"line",data:{labels:[],datasets:[{label:"BPM",data:[]}]}});
 setInterval(()=>{
 let bpm=Math.floor(Math.random()*40)+60;
-bpmEl=bpm+" bpm";
-bpm.innerText=bpmEl;
+document.getElementById("bpm").innerText=bpm+" bpm";
+
 let s=bpm>110?"🚨 Alto risco":bpm>90?"⚠️ Atenção":"Normal";
-ia.innerText=s;
+document.getElementById("ia").innerText=s;
+
 chart.data.labels.push("");
 chart.data.datasets[0].data.push(bpm);
-if(chart.data.labels.length>10){chart.data.labels.shift();chart.data.datasets[0].data.shift();}
+
+if(chart.data.labels.length>10){
+chart.data.labels.shift();
+chart.data.datasets[0].data.shift();
+}
+
 chart.update();
 },2000);
 
@@ -321,7 +354,6 @@ alert("Agendado!");
 // EMERGÊNCIA
 function emergencia(){alert("🚨 Emergência acionada!");}
 
-// LOAD
 window.onload=()=>{mostrar();mostrarOdonto();}
 </script>
 
