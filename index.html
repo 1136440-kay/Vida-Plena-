@@ -27,20 +27,15 @@ input{padding:10px;margin:5px;}
 </head>
 <body>
 
-<!-- 🔐 LOGIN -->
 <div id="loginScreen">
   <h2>🔐 VidaPlena+ Login</h2>
-
   <input id="user" placeholder="Usuário">
   <input id="pass" type="password" placeholder="Senha">
-
   <button onclick="login()">Entrar</button>
   <button onclick="cadastro()">Cadastrar</button>
-
   <p id="msg"></p>
 </div>
 
-<!-- 🧠 SITE -->
 <div class="card">
 <h3>❤️ Batimentos</h3>
 <p id="bpm"></p>
@@ -65,49 +60,40 @@ input{padding:10px;margin:5px;}
 <ul id="listaOdonto"></ul>
 </div>
 
-<button class="emergency" onclick="emergencia()">🚨</button>
+<button class="emergency" onclick="alert('🚨 Emergência acionada!')">🚨</button>
 
 <script>
-
-// 🔐 CADASTRO
 function cadastro(){
-  let usuario = document.getElementById("user").value;
-  let senha = document.getElementById("pass").value;
+let usuario=document.getElementById("user").value;
+let senha=document.getElementById("pass").value;
 
-  if(!usuario || !senha){
-    document.getElementById("msg").innerText = "Preencha tudo!";
-    return;
-  }
-
-  localStorage.setItem("user", usuario);
-  localStorage.setItem("pass", senha);
-
-  document.getElementById("msg").innerText = "Cadastro realizado!";
+if(!usuario || !senha){
+document.getElementById("msg").innerText="Preencha tudo!";
+return;
 }
 
-// 🔐 LOGIN
+localStorage.setItem("user",usuario);
+localStorage.setItem("pass",senha);
+document.getElementById("msg").innerText="Cadastro realizado!";
+}
+
 function login(){
-  let usuario = document.getElementById("user").value;
-  let senha = document.getElementById("pass").value;
+let usuario=document.getElementById("user").value;
+let senha=document.getElementById("pass").value;
 
-  let userSalvo = localStorage.getItem("user");
-  let passSalva = localStorage.getItem("pass");
-
-  if(usuario === userSalvo && senha === passSalva){
-    document.getElementById("loginScreen").style.display = "none";
-  } else {
-    document.getElementById("msg").innerText = "Usuário ou senha incorretos!";
-  }
+if(usuario===localStorage.getItem("user") && senha===localStorage.getItem("pass")){
+document.getElementById("loginScreen").style.display="none";
+}else{
+document.getElementById("msg").innerText="Usuário ou senha incorretos!";
+}
 }
 
-// ❤️ MONITORAMENTO
 setInterval(()=>{
 let bpm=Math.floor(Math.random()*40)+60;
 document.getElementById("bpm").innerText=bpm+" bpm";
 document.getElementById("ia").innerText=bpm>100?"🚨 Risco":"Normal";
 },2000);
 
-// 📋 PRONTUÁRIO
 function salvar(){
 let dados=JSON.parse(localStorage.getItem("prontuario"))||[];
 dados.push(document.getElementById("nota").value);
@@ -115,7 +101,6 @@ localStorage.setItem("prontuario",JSON.stringify(dados));
 mostrar();
 }
 
-// MOSTRAR PRONTUÁRIO
 function mostrar(){
 let lista=document.getElementById("lista");
 lista.innerHTML="";
@@ -127,7 +112,6 @@ lista.appendChild(li);
 });
 }
 
-// 🦷 ODONTO
 function odonto(){
 let texto=document.getElementById("dente").value;
 let diag=texto.includes("dor")?"Possível cárie":"Avaliação";
@@ -137,7 +121,6 @@ localStorage.setItem("odonto",JSON.stringify(dados));
 mostrarOdonto();
 }
 
-// MOSTRAR ODONTO
 function mostrarOdonto(){
 let lista=document.getElementById("listaOdonto");
 lista.innerHTML="";
@@ -149,17 +132,10 @@ lista.appendChild(li);
 });
 }
 
-// 🚨 EMERGÊNCIA
-function emergencia(){
-alert("🚨 Emergência acionada!");
-}
-
-// 🔄 CARREGAR DADOS
 window.onload=function(){
 mostrar();
 mostrarOdonto();
 }
-
 </script>
 
 </body>
