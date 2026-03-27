@@ -1,442 +1,48 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VidaPlena+ Premium</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-body{
-margin:0;
-font-family:'Segoe UI';
-background:linear-gradient(135deg,#667eea,#764ba2);
-display:flex;
-}
-
-.sidebar{
-width:220px;
-background:#1e1e2f;
-color:white;
-padding:20px;
-height:100vh;
-}
-
-.sidebar button{
-width:100%;
-margin-top:10px;
-}
-
-.main{
-flex:1;
-padding:20px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:15px;
-margin-bottom:15px;
-box-shadow:0 4px 15px rgba(0,0,0,0.2);
-}
-
-img{
-width:100%;
-border-radius:10px;
-margin-bottom:10px;
-}
-
-#loginScreen{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:linear-gradient(135deg,#667eea,#764ba2);
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-z-index:9999;
-}
-
-input{
-padding:10px;
-margin:5px;
-border-radius:8px;
-border:none;
-}
-
-button{
-padding:10px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-background:#667eea;
-color:white;
-}
-
-.emergency{
-position:fixed;
-bottom:20px;
-right:20px;
-background:red;
-padding:20px;
-border-radius:50%;
-color:white;
-}
-</style>
-</head>
-
-<body>
-
-<!-- LOGIN -->
-<div id="loginScreen">
-<h2>🔐 VidaPlena+ Premium</h2>
-
-<input id="cpf" placeholder="CPF">
-<button onclick="buscarDados()">🔎 Buscar dados</button>
-
-<input id="user" placeholder="Usuário">
-<input id="pass" type="password" placeholder="Senha">
-
-<button onclick="login()">Entrar</button>
-<button onclick="cadastro()">Cadastrar</button>
-
-<p id="msg"></p>
-</div>
-
-<!-- SIDEBAR -->
-<div class="sidebar">
-<h2>VidaPlena+</h2>
-<p id="userInfo"></p>
-
-<button onclick="logout()">🚪 Sair</button>
-<button onclick="limparDados()">🗑️ Reset</button>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
+<!-- Dentro da <div class="main">, antes do fechamento -->
 <div class="card">
-<h2>🏥 VidaPlena+ Saúde Digital</h2>
-<p>Cuidado remoto e monitoramento inteligente.</p>
+  <h3>📷 Consultar por Foto</h3>
+  <input type="file" id="fotoInput" accept="image/*">
+  <button onclick="analisarFoto()">Analisar</button>
+  <p id="respostaFoto"></p>
 </div>
-
-<div class="card">
-<h3>❤️ Monitoramento</h3>
-<p id="bpm"></p>
-<p id="ia"></p>
-</div>
-
-<div class="card">
-<h3>📊 Gráfico</h3>
-<canvas id="grafico"></canvas>
-</div>
-
-<div class="card">
-<h3>📋 Prontuário</h3>
-<input id="nota">
-<button onclick="salvar()">Salvar</button>
-<ul id="lista"></ul>
-</div>
-
-<div class="card">
-<h3>🦷 Odontologia</h3>
-<input id="dente">
-<button onclick="odonto()">Registrar</button>
-<ul id="listaOdonto"></ul>
-</div>
-
-<div class="card">
-<h3>📅 Agendamento</h3>
-<button onclick="buscarLocais()">Buscar locais</button>
-<ul id="locais"></ul>
-</div>
-
-<!-- 🤖 IA -->
-<div class="card">
-<h3>🤖 Assistente de Saúde</h3>
-<input id="perguntaIA" placeholder="Digite sua dúvida...">
-<button onclick="responderIA()">Perguntar</button>
-<p id="respostaIA"></p>
-</div>
-
-<!-- 💊 MEDICAMENTOS -->
-<div class="card">
-<h3>💊 Medicamentos</h3>
-<input id="medicamento" placeholder="Digite o medicamento">
-<button onclick="buscarMedicamento()">Buscar</button>
-<p id="infoMedicamento"></p>
-</div>
-
-<!-- 🍎 ALIMENTAÇÃO E EXERCÍCIO -->
-<div class="card">
-<h3>🍎 Alimentação Saudável</h3>
-<button onclick="gerarDieta()">Gerar dica</button>
-<p id="dieta"></p>
-<ul id="listaDieta"></ul>
-</div>
-
-<div class="card">
-<h3>🏃 Exercícios para Idosos</h3>
-<button onclick="gerarExercicio()">Gerar exercício</button>
-<p id="exercicio"></p>
-<ul id="listaExercicio"></ul>
-</div>
-
-<!-- 🏥 SUS DIGITAL -->
-<div class="card">
-<h3>🏥 Integração SUS Digital</h3>
-<input id="cpfSus" placeholder="Digite o CPF">
-<button onclick="consultarSUS()">🔎 Consultar SUS</button>
-<div id="dadosSus"></div>
-</div>
-
-</div>
-
-<button class="emergency" onclick="emergencia()">🚨</button>
 
 <script>
-
-// SUS SIMULADO LOCAL
-const bancoDados=[
-{cpf:"123",nome:"Maria Silva",idade:68,condicao:"Hipertensão"},
-{cpf:"456",nome:"João Souza",idade:72,condicao:"Diabetes"}
-];
-
-function buscarDados(){
-let pessoa=bancoDados.find(p=>p.cpf===cpf.value);
-if(pessoa){
-user.value=pessoa.nome;
-alert("Nome: "+pessoa.nome+"\nIdade: "+pessoa.idade+"\nCondição: "+pessoa.condicao);
-}else alert("CPF não encontrado");
-}
-
-// LOGIN
-function cadastro(){
-if(!user.value||!pass.value){msg.innerText="Preencha!";return;}
-localStorage.setItem("user",user.value);
-localStorage.setItem("pass",pass.value);
-msg.innerText="Cadastrado!";
-}
-
-function login(){
-if(user.value===localStorage.getItem("user") && pass.value===localStorage.getItem("pass")){
-loginScreen.style.display="none";
-userInfo.innerText="👤 "+user.value;
-}else msg.innerText="Erro";
-}
-
-function logout(){loginScreen.style.display="flex";}
-function limparDados(){localStorage.clear();location.reload();}
-
-// GRÁFICO
-let chart=new Chart(grafico,{type:"line",data:{labels:[],datasets:[{label:"BPM",data:[]}]}});
-setInterval(()=>{
-let bpm=Math.floor(Math.random()*40)+60;
-document.getElementById("bpm").innerText = bpm+" bpm";
-let s = bpm>110?"🚨 Alto risco":bpm>90?"⚠️ Atenção":"Normal";
-document.getElementById("ia").innerText = s;
-
-chart.data.labels.push("");
-chart.data.datasets[0].data.push(bpm);
-if(chart.data.labels.length>10){
-chart.data.labels.shift();
-chart.data.datasets[0].data.shift();
-}
-chart.update();
-},2000);
-
-// PRONTUÁRIO
-function salvar(){
-let d=JSON.parse(localStorage.getItem("p"))||[];
-d.push(new Date().toLocaleString()+" → "+nota.value);
-localStorage.setItem("p",JSON.stringify(d));
-mostrar();
-}
-function mostrar(){
-lista.innerHTML="";
-(JSON.parse(localStorage.getItem("p"))||[]).forEach(i=>{
-let li=document.createElement("li");li.innerText=i;lista.appendChild(li);
-});
-}
-
-// ODONTO
-function odonto(){
-let d=dente.value;
-let diag=d.includes("dor")?"Cárie":"OK";
-let o=JSON.parse(localStorage.getItem("o"))||[];
-o.push(new Date().toLocaleString()+" → "+d+" → "+diag);
-localStorage.setItem("o",JSON.stringify(o));
-mostrarOdonto();
-}
-function mostrarOdonto(){
-listaOdonto.innerHTML="";
-(JSON.parse(localStorage.getItem("o"))||[]).forEach(i=>{
-let li=document.createElement("li");li.innerText=i;listaOdonto.appendChild(li);
-});
-}
-
-// AGENDAMENTO
-const servicos=[{nome:"Clínica Médica Vida"},{nome:"OdontoCare"}];
-function buscarLocais(){navigator.geolocation.getCurrentPosition(()=>mostrarLocais());}
-function mostrarLocais(){
-locais.innerHTML="";
-servicos.forEach(s=>{
-let li=document.createElement("li");
-li.innerHTML=`${s.nome} <button onclick="agendar('${s.nome}')">Agendar</button>`;
-locais.appendChild(li);
-});
-}
-function agendar(n){
-let d=new Date().toLocaleString();
-let a=JSON.parse(localStorage.getItem("agenda"))||[];
-a.push("Consulta em "+n+" → "+d);
-localStorage.setItem("agenda",JSON.stringify(a));
-alert("Agendado!");
-}
-
-// EMERGÊNCIA
-function emergencia(){alert("🚨 Emergência acionada!");}
-
-// 🤖 IA
-function responderIA(){
-let p=perguntaIA.value.toLowerCase();
-let r="Não entendi.";
-if(p.includes("dor")) r="Pode indicar inflamação.";
-else if(p.includes("pressão")) r="Controle alimentação e procure médico.";
-else if(p.includes("diabetes")) r="Controle glicemia.";
-else if(p.includes("coração")) r="Monitore batimentos.";
-respostaIA.innerText=r;
-}
-
-// MEDICAMENTOS
-const meds={
-"losartana":"Pressão alta",
-"metformina":"Diabetes",
-"dipirona":"Dor",
-"ibuprofeno":"Inflamação"
+// ----------------- CONSULTA POR FOTO -----------------
+// SIMULAÇÃO DE RECONHECIMENTO DE IMAGEM
+const itensReconhecidos = {
+  // Medicamentos
+  "losartana": "Losartana → Pressão alta, dose: 50mg/dia",
+  "metformina": "Metformina → Diabetes tipo 2, dose: 500mg/dia",
+  "ibuprofeno": "Ibuprofeno → Dor, anti-inflamatório",
+  "dipirona": "Dipirona → Dor e febre",
+  // Alimentos
+  "banana": "Banana → 89 kcal por 100g, carboidratos: 23g, potássio: 358mg",
+  "maçã": "Maçã → 52 kcal por 100g, carboidratos: 14g, fibras: 2,4g",
+  "couve": "Couve → 49 kcal por 100g, fibras: 3,6g, vitamina C: 120mg",
+  "arroz": "Arroz integral → 111 kcal por 100g, carboidratos: 23g, fibras: 1,8g",
+  "feijão": "Feijão → 347 kcal por 100g, proteínas: 21g, fibras: 16g",
+  // Exercícios
+  "caminhada": "Caminhada leve → 30 minutos, baixa intensidade, ideal para idosos",
+  "alongamento": "Alongamento → 10 minutos, ajuda na flexibilidade e circulação"
 };
-function buscarMedicamento(){
-let m=medicamento.value.toLowerCase();
-infoMedicamento.innerText=meds[m]||"Não encontrado";
+
+function analisarFoto() {
+  const file = document.getElementById("fotoInput").files[0];
+  if (!file) { 
+    alert("Selecione uma foto!"); 
+    return; 
+  }
+
+  // Simulação: identifica o item pelo nome do arquivo (ex: "banana.jpg", "losartana.png")
+  const nomeArquivo = file.name.toLowerCase();
+  let resultado = "❌ Item não reconhecido";
+
+  Object.keys(itensReconhecidos).forEach(chave => {
+    if (nomeArquivo.includes(chave)) {
+      resultado = itensReconhecidos[chave];
+    }
+  });
+
+  document.getElementById("respostaFoto").innerText = resultado;
 }
-
-// 🍎 BANCO DE DADOS DE DIETA
-const dietas = [
-"Consuma frutas diariamente (banana, maçã, mamão)",
-"Evite excesso de sal para controle da pressão",
-"Beba pelo menos 2 litros de água por dia",
-"Inclua vegetais verdes (couve, espinafre)",
-"Prefira alimentos integrais",
-"Evite alimentos ultraprocessados",
-"Consuma proteínas leves como peixe e frango",
-"Controle o açúcar para prevenir diabetes",
-"Inclua cálcio (leite, queijo) para ossos",
-"Faça refeições em horários regulares"
-];
-
-// 🏃 BANCO DE DADOS DE EXERCÍCIOS
-const exercicios = [
-"Caminhada leve por 30 minutos",
-"Alongamento ao acordar",
-"Exercícios de equilíbrio (ficar em um pé só)",
-"Subir escadas com cuidado",
-"Movimentos de braço com peso leve",
-"Yoga ou alongamento leve",
-"Dança leve para coordenação",
-"Exercícios de respiração",
-"Pedalar bicicleta ergométrica",
-"Fisioterapia preventiva"
-];
-
-// GERAR DIETA
-function gerarDieta(){
-let dica = dietas[Math.floor(Math.random()*dietas.length)];
-document.getElementById("dieta").innerText = dica;
-let lista = JSON.parse(localStorage.getItem("dieta")) || [];
-lista.push(dica);
-localStorage.setItem("dieta", JSON.stringify(lista));
-mostrarDieta();
-}
-
-// MOSTRAR DIETA
-function mostrarDieta(){
-let listaEl = document.getElementById("listaDieta");
-listaEl.innerHTML = "";
-(JSON.parse(localStorage.getItem("dieta")) || []).forEach(item=>{
-let li = document.createElement("li");
-li.innerText = item;
-listaEl.appendChild(li);
-});
-}
-
-// GERAR EXERCÍCIO
-function gerarExercicio(){
-let ex = exercicios[Math.floor(Math.random()*exercicios.length)];
-document.getElementById("exercicio").innerText = ex;
-let lista = JSON.parse(localStorage.getItem("exercicio")) || [];
-lista.push(ex);
-localStorage.setItem("exercicio", JSON.stringify(lista));
-mostrarExercicio();
-}
-
-// MOSTRAR EXERCÍCIO
-function mostrarExercicio(){
-let listaEl = document.getElementById("listaExercicio");
-listaEl.innerHTML = "";
-(JSON.parse(localStorage.getItem("exercicio")) || []).forEach(item=>{
-let li = document.createElement("li");
-li.innerText = item;
-listaEl.appendChild(li);
-});
-}
-
-// 🔹 SUS DIGITAL SIMULADO
-const SUS_API_SIMULADA = [
-{cpf:"123",nome:"Maria Silva",idade:68,cartaoSus:"898 0011 2233 4455",condicoes:["Hipertensão"],medicamentos:["Losartana"],ultimaConsulta:"10/02/2026"},
-{cpf:"456",nome:"João Souza",idade:72,cartaoSus:"898 0099 8877 6655",condicoes:["Diabetes"],medicamentos:["Metformina"],ultimaConsulta:"05/01/2026"}
-];
-
-function consultarSUS(){
-let cpf = document.getElementById("cpfSus").value;
-let paciente = SUS_API_SIMULADA.find(p => p.cpf === cpf);
-let area = document.getElementById("dadosSus");
-
-if(paciente){
-area.innerHTML = `
-<h4>👤 ${paciente.nome}</h4>
-<p><b>Idade:</b> ${paciente.idade}</p>
-<p><b>Cartão SUS:</b> ${paciente.cartaoSus}</p>
-<p><b>Condições:</b> ${paciente.condicoes.join(", ")}</p>
-<p><b>Medicamentos:</b> ${paciente.medicamentos.join(", ")}</p>
-<p><b>Última consulta:</b> ${paciente.ultimaConsulta}</p>
-<button onclick="importarProntuario('${paciente.nome}')">📥 Importar para prontuário</button>
-`;
-}else{
-area.innerHTML = "<p>❌ Paciente não encontrado no SUS</p>";
-}
-}
-
-function importarProntuario(nome){
-let dados = JSON.parse(localStorage.getItem("p")) || [];
-dados.push("📥 Dados importados do SUS → " + nome);
-localStorage.setItem("p", JSON.stringify(dados));
-mostrar();
-alert("✅ Dados importados para o prontuário!");
-}
-
-// LOAD
-window.onload = ()=>{
-mostrar();
-mostrarOdonto();
-mostrarDieta();
-mostrarExercicio();
-}
-
 </script>
-
-</body>
-</html>
